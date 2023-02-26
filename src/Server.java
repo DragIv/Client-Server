@@ -27,12 +27,31 @@ class ClientHandler implements Runnable{
         try {
             Scanner scanner = new Scanner(socket.getInputStream());
             PrintWriter out = new PrintWriter(socket.getOutputStream());
+            Scanner send = new Scanner(System.in);
 
-            while (scanner.hasNext()){
-                System.out.println("Welcome " + scanner.nextLine());
+            String nameUser = scanner.nextLine();
+            System.out.println("Welcome " + nameUser);
+            out.flush();
+
+            int i = 0;
+            while (scanner.hasNext()) {
+                String str = scanner.nextLine();
+                if (str.equals("bye")) {
+                    break;
+                }
+                if (str.equals("exit") && nameUser.equals("admin")) {
+                    socket.getOutputStream().close();
+                    socket.getInputStream().close();
+                    socket.close();
+                }
+                i++;
+                System.out.println("Сообщение №" + i + "("+ nameUser+") - " + str);
+                out.println(i);
+                out.flush();
             }
-            scanner.close();
-            socket.close();
-        } catch (Exception e) {}
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
